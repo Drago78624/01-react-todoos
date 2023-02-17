@@ -1,5 +1,6 @@
 import { Container } from '@chakra-ui/react'
 import React, {useContext} from 'react'
+import Form from '../components/Form';
 import Navbar from '../components/Navbar'
 import UtilityContext from "../utility-context";
 
@@ -11,7 +12,7 @@ const Home = () => {
     <>
       <Navbar />
       <Container maxW={utilityCtx.maxWidth}>
-        a
+        <Form colorScheme={utilityCtx.colorScheme} />
       </Container>
     </>
   )
