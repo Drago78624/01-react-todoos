@@ -3,8 +3,8 @@ import React from "react";
 
 const Form = (props) => {
   return (
-    <Box padding={3}>
-      <Heading>Add Todo</Heading>
+    <Box my={8}>
+      <Heading size="lg">Add Todo</Heading>
       <FormControl marginTop={4}>
         <FormLabel>Title</FormLabel>
         <Input placeholder="e.g Go shopping" type="email" />
