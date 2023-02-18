@@ -87,7 +87,7 @@ const RegisterForm = () => {
               <FormErrorMessage>Please enter your password</FormErrorMessage>
             )}
           </FormControl>
-          <FormControl isInvalid={errors["Confirm Password"]}>
+          <FormControl isInvalid={!passwordsMatch}>
             <Input
               variant="flushed"
               placeholder="Confirm Password"
