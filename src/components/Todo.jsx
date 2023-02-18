@@ -7,9 +7,9 @@ const Todo = () => {
     const utilityCtx = useContext(UtilityContext)
   return (
     <Box width="full" padding={3} boxShadow="xl">
-        <Flex justifyContent="space-between" alignItems="center">
-            <Text>Go shopping</Text>
-            <Text>Buy tomatoes, onions, potatoes and soap</Text>
+        <Flex justifyContent="space-between" alignItems="center" flexDirection={{base: "column", md: "row"}}>
+            <Text mb={{base: 4, md: 0}}>Go shopping</Text>
+            <Text mb={{base: 5, md: 0}}>Buy tomatoes, onions, potatoes and soap</Text>
             <HStack>
                 <Button colorScheme={utilityCtx.colorScheme} variant="outline">
                     <EditIcon />

@@ -7,7 +7,7 @@ const LoginForm = () => {
   const utilityCtx = useContext(UtilityContext);
 
   return (
-    <Box textAlign="center" minW="400px">
+    <Box textAlign="center" minW={{base: "300px", sm: "400px"}}>
       <Heading mb={8} size="lg">
         Sign in
       </Heading>
