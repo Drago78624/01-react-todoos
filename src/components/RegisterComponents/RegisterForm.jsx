@@ -10,37 +10,36 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 import { FaGooglePlusG, FaFacebookSquare } from "react-icons/fa";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import UtilityContext from "../../utility-context";
 import { auth } from "../../firebase-config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const RegisterForm = () => {
   const utilityCtx = useContext(UtilityContext);
-  const [passwordsMatch, setPasswordsMatch] = useState(true)
+
+  const formSchema = yup.object().shape({
+    email: yup.string().email().required("Please enter your email"),
+    password: yup.string().min(8).required(),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref("password"), null], "Passwords do not match")
+      .required("Please confirm your password"),
+  });
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(formSchema),
+  });
 
-  console.log(passwordsMatch)
-
-  const onSignUp = async (values) => {
-    if(values["Password"] === values["Confirm Password"]){
-      // try {
-      //   await createUserWithEmailAndPassword(auth, values["Email"], values["Password"]);
-      // } catch (err) {
-      //   console.log(err);
-      // }
-      setPasswordsMatch(true)
-      console.log(values);
-    }else {
-      setPasswordsMatch(false)
-    }
+  const onSignUp = (data) => {
+    console.log(data);
   };
 
   return (
@@ -48,60 +47,46 @@ const RegisterForm = () => {
       <Heading mb={8} size="lg">
         Register
       </Heading>
+      <form onSubmit={handleSubmit(onSignUp)}>
         <VStack spacing={5}>
-          <FormControl isInvalid={errors["Full Name"]}>
-            <Input
-              variant="flushed"
-              placeholder="Full name"
-              type="text"
-              {...register("Full Name", {
-                required: true,
-                max: 50,
-                min: 8,
-                maxLength: 50,
-              })}
-            />
-            {errors["Full Name"] && (
-              <FormErrorMessage>Please enter your name</FormErrorMessage>
-            )}
-          </FormControl>
-          <FormControl isInvalid={errors["Email"]}>
+          <FormControl isInvalid={errors.email}>
             <Input
               variant="flushed"
               placeholder="Email address"
               type="email"
-              {...register("Email", { required: true })}
+              {...register("email")}
             />
-            {errors["Email"] && (
-              <FormErrorMessage>Please enter your email</FormErrorMessage>
-            )}
+            <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
           </FormControl>
-          <FormControl isInvalid={errors["Password"]}>
+          <FormControl isInvalid={errors.password}>
             <Input
               variant="flushed"
               placeholder="Password"
               type="password"
-              {...register("Password", { required: true, min: 8 })}
+              {...register("password")}
             />
-            {errors["Password"] && (
-              <FormErrorMessage>Please enter your password</FormErrorMessage>
-            )}
+            <FormErrorMessage>{errors.password?.message.charAt(0).toUpperCase() + errors.password?.message.slice(1)}</FormErrorMessage>
           </FormControl>
-          <FormControl isInvalid={!passwordsMatch}>
+          <FormControl isInvalid={errors.confirmPassword}>
             <Input
               variant="flushed"
               placeholder="Confirm Password"
               type="password"
-              {...register("Confirm Password", { required: true, min: 8 })}
+              {...register("confirmPassword")}
             />
-            {!passwordsMatch && (
-              <FormErrorMessage>Passwords do not match</FormErrorMessage>
-            )}
+            <FormErrorMessage>
+              {errors.confirmPassword?.message}
+            </FormErrorMessage>
           </FormControl>
-          <Button onClick={handleSubmit(onSignUp)} colorScheme={utilityCtx.colorScheme} width="full">
+          <Button
+            type="submit"
+            colorScheme={utilityCtx.colorScheme}
+            width="full"
+          >
             Register
           </Button>
         </VStack>
+      </form>
       <Divider my={5} />
       <VStack spacing={5}>
         <Button colorScheme="red" width="full">
