@@ -8,6 +8,7 @@ import {
   Text,
   FormControl,
   FormErrorMessage,
+  Link,
 } from "@chakra-ui/react";
 import { FaGooglePlusG, FaFacebookSquare } from "react-icons/fa";
 import React, { useContext, useState } from "react";
@@ -17,9 +18,14 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
   const utilityCtx = useContext(UtilityContext);
+  const [userExists, setUserExists] = useState(false)
+
+  const navigate = useNavigate();
 
   const formSchema = yup.object().shape({
     email: yup.string().email().required("Please enter your email"),
@@ -38,8 +44,21 @@ const RegisterForm = () => {
     resolver: yupResolver(formSchema),
   });
 
-  const onSignUp = (data) => {
+  const onSignUp = async (data) => {
     console.log(data);
+    try {
+      await createUserWithEmailAndPassword(auth, data.email, data.password);
+      navigate("/login");
+    } catch (err) {
+      const errorCode = err.code;
+      if (errorCode === "auth/email-already-in-use") {
+        console.log("User already exists with this email");
+        // Show custom error message here
+        setUserExists(true)
+      } else {
+        console.log(err);
+      }
+    }
   };
 
   return (
@@ -49,14 +68,14 @@ const RegisterForm = () => {
       </Heading>
       <form onSubmit={handleSubmit(onSignUp)}>
         <VStack spacing={5}>
-          <FormControl isInvalid={errors.email}>
+          <FormControl isInvalid={errors.email || userExists}>
             <Input
               variant="flushed"
               placeholder="Email address"
               type="email"
               {...register("email")}
             />
-            <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
+            <FormErrorMessage>{errors.email?.message || (userExists && "User already exists")}</FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={errors.password}>
             <Input
@@ -65,7 +84,10 @@ const RegisterForm = () => {
               type="password"
               {...register("password")}
             />
-            <FormErrorMessage>{errors.password?.message.charAt(0).toUpperCase() + errors.password?.message.slice(1)}</FormErrorMessage>
+            <FormErrorMessage>
+              {errors.password?.message.charAt(0).toUpperCase() +
+                errors.password?.message.slice(1)}
+            </FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={errors.confirmPassword}>
             <Input
@@ -97,6 +119,12 @@ const RegisterForm = () => {
           <FaFacebookSquare size={25} />
           <Text ml={3}>Sign in with Facebook</Text>
         </Button>
+        <Text>
+          Already have an account ?{" "}
+          <Link as={RouterLink} to="/login">
+            Login
+          </Link>
+        </Text>
       </VStack>
     </Box>
   );
