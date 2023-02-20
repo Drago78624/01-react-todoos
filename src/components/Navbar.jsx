@@ -15,7 +15,7 @@ const Navbar = () => {
   const onLogout = async () => {
     try {
       await signOut(auth);
-      navigate("/login")
+      navigate("/")
       authCtx.setUserStatus(false)
     } catch (err) {
       console.log(err);
@@ -30,7 +30,7 @@ const Navbar = () => {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Heading as={RouterLink} size="lg" to="/">
+        <Heading as={RouterLink} size="lg" to="/home">
           Todoos!
         </Heading>
         <HStack>
@@ -38,7 +38,7 @@ const Navbar = () => {
           {!authCtx.userStatus && (
             <Button
               as={RouterLink}
-              to="/login"
+              to="/"
               variant="outline"
               colorScheme={utilityCtx.colorScheme}
             >

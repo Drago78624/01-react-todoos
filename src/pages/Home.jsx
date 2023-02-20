@@ -1,8 +1,8 @@
 import { Container } from '@chakra-ui/react'
 import React, {useContext} from 'react'
-import Form from '../components/Form';
+import Form from '../components/HomePageComponents/Form';
 import Navbar from '../components/Navbar'
-import Todos from '../components/Todos';
+import Todos from '../components/HomePageComponents/Todos';
 import { auth } from '../firebase-config';
 import UtilityContext from "../utility-context";
 

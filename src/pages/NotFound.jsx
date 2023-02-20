@@ -1,8 +1,13 @@
+import { Link } from '@chakra-ui/react'
 import React from 'react'
+import { Link as RouterLink } from 'react-router-dom'
 
 const NotFound = () => {
   return (
-    <div>NotFound</div>
+    <>
+    not found
+    <Link as={RouterLink} to="/">login</Link>
+    </>
   )
 }
 

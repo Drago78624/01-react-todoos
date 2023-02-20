@@ -11,14 +11,14 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { FaGooglePlusG, FaFacebookSquare } from "react-icons/fa";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import UtilityContext from "../../utility-context";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link as RouterLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import AuthContext from "../../auth-context";
 
@@ -48,7 +48,7 @@ const LoginForm = () => {
       if(auth?.currentUser){
         authCtx.setUserStatus(true)
       }
-      navigate("/");
+      navigate("/home");
     } catch (err) {
       const errorCode = err.code;
       if (errorCode === "auth/wrong-password") {

@@ -1,7 +1,7 @@
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons'
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react'
 import React, { useContext } from 'react'
-import UtilityContext from '../utility-context'
+import UtilityContext from '../../utility-context'
 
 const Todo = () => {
     const utilityCtx = useContext(UtilityContext)

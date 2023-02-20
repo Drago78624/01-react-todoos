@@ -20,10 +20,12 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link as RouterLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../../auth-context";
 
 const RegisterForm = () => {
   const utilityCtx = useContext(UtilityContext);
   const [userExists, setUserExists] = useState(false)
+  const authCtx = useContext(AuthContext)
 
   const navigate = useNavigate();
 
@@ -48,7 +50,8 @@ const RegisterForm = () => {
     console.log(data);
     try {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
-      navigate("/login");
+      authCtx.setUserStatus(true)
+      navigate("/home");
     } catch (err) {
       const errorCode = err.code;
       if (errorCode === "auth/email-already-in-use") {
@@ -121,7 +124,7 @@ const RegisterForm = () => {
         </Button>
         <Text>
           Already have an account ?{" "}
-          <Link as={RouterLink} to="/login">
+          <Link as={RouterLink} to="/">
             Login
           </Link>
         </Text>
