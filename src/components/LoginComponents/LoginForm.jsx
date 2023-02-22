@@ -18,13 +18,14 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link as RouterLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase-config";
+import { onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, googleAuthProvider } from "../../firebase-config";
 import AuthContext from "../../auth-context";
 
 const LoginForm = () => {
   const utilityCtx = useContext(UtilityContext);
   const [wrongPass, setWrongPass] = useState(false)
+  const [userNotFound, setUserNotFound] = useState(false)
   const authCtx = useContext(AuthContext)
 
   const navigate = useNavigate()
@@ -47,6 +48,7 @@ const LoginForm = () => {
       await signInWithEmailAndPassword(auth, data.email, data.password);
       if(auth?.currentUser){
         authCtx.setUserStatus(true)
+        authCtx.setUserId(auth.currentUser.uid)
       }
       navigate("/home");
     } catch (err) {
@@ -54,9 +56,22 @@ const LoginForm = () => {
       if (errorCode === "auth/wrong-password") {
         console.log("wrong password");
         setWrongPass(true)
-      } else {
-        console.log(err);
+      } else if(errorCode === "auth/user-not-found") {
+        console.log("user does not exist");
+        setUserNotFound(true)
+      }else {
+        console.log(err)
       }
+    }
+  };
+
+  const onLogInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleAuthProvider);
+      authCtx.setUserStatus(true)
+      authCtx.setUserId(auth.currentUser.uid)
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -67,14 +82,14 @@ const LoginForm = () => {
       </Heading>
       <form onSubmit={handleSubmit(onLogin)}>
         <VStack spacing={5}>
-          <FormControl isInvalid={errors.email}>
+          <FormControl isInvalid={errors.email || userNotFound}>
             <Input
               variant="flushed"
               placeholder="Email address"
               type="email"
               {...register("email")}
             />
-            <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
+            <FormErrorMessage>{errors.email?.message || (userNotFound && "User does not exist")}</FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={errors.password || wrongPass}>
             <Input
@@ -99,7 +114,7 @@ const LoginForm = () => {
       </form>
       <Divider my={5} />
       <VStack spacing={5}>
-        <Button colorScheme="red" width="full">
+        <Button onClick={onLogInWithGoogle} colorScheme="red" width="full">
           <FaGooglePlusG size={30} />
           <Text ml={3}>Sign in with Google</Text>
         </Button>

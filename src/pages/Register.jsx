@@ -6,7 +6,7 @@ import RegisterForm from '../components/RegisterComponents/RegisterForm'
 const Register = () => {
   return (
     <Box minH="100vh" display="flex" justifyContent="center" alignItems="center">
-      <BackToHomeBtn />
+      {/* <BackToHomeBtn /> */}
       <RegisterForm />
     </Box>
   )

@@ -5,18 +5,17 @@ import Navbar from '../components/Navbar'
 import Todos from '../components/HomePageComponents/Todos';
 import { auth } from '../firebase-config';
 import UtilityContext from "../utility-context";
+import AuthContext from '../auth-context';
 
 
 const Home = () => {
   const utilityCtx = useContext(UtilityContext);
-
-  console.log(auth?.currentUser?.email)
+  const authCtx = useContext(AuthContext)
 
   return (
     <>
       <Navbar />
       <Container maxW={utilityCtx.maxWidth}>
-        <Form colorScheme={utilityCtx.colorScheme} />
         <Todos />
       </Container>
     </>

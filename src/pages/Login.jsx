@@ -6,7 +6,7 @@ import LoginForm from '../components/LoginComponents/LoginForm'
 const Login = () => {
   return (
     <Box minH="100vh" display="flex" justifyContent="center" alignItems="center">
-      <BackToHomeBtn />
+      {/* <BackToHomeBtn /> */}
       <LoginForm />
     </Box>
   )

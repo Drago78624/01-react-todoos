@@ -13,8 +13,8 @@ import {
 import { FaGooglePlusG, FaFacebookSquare } from "react-icons/fa";
 import React, { useContext, useState } from "react";
 import UtilityContext from "../../utility-context";
-import { auth } from "../../firebase-config";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, facebookAuthProvider, googleAuthProvider } from "../../firebase-config";
+import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -51,6 +51,7 @@ const RegisterForm = () => {
     try {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
       authCtx.setUserStatus(true)
+      authCtx.setUserId(auth.currentUser.uid)
       navigate("/home");
     } catch (err) {
       const errorCode = err.code;
@@ -61,6 +62,24 @@ const RegisterForm = () => {
       } else {
         console.log(err);
       }
+    }
+  };
+
+  const onSignUpWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleAuthProvider);
+      authCtx.setUserStatus(true)
+      authCtx.setUserId(auth.currentUser.uid)
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const onSignUpWithFacebook= async () => {
+    try {
+      await signInWithPopup(auth, facebookAuthProvider);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -114,7 +133,7 @@ const RegisterForm = () => {
       </form>
       <Divider my={5} />
       <VStack spacing={5}>
-        <Button colorScheme="red" width="full">
+        <Button onClick={onSignUpWithGoogle} colorScheme="red" width="full">
           <FaGooglePlusG size={30} />
           <Text ml={3}>Sign in with Google</Text>
         </Button>
