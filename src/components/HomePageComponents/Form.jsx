@@ -12,9 +12,11 @@ import { addDoc, collection } from "firebase/firestore";
 import React, { useContext, useState } from "react";
 import AuthContext from "../../auth-context";
 import { db } from "../../firebase-config";
+import MessageContext from "../../message-context";
 
 const Form = (props) => {
   const authCtx = useContext(AuthContext);
+  const msgCtx = useContext(MessageContext);
   const [todoTitle, setTodoTitle] = useState("");
   const [todoDesc, setTodoDesc] = useState("");
   const userId = authCtx.userId;
@@ -29,9 +31,12 @@ const Form = (props) => {
           todo_description: todoDesc,
           user_id: userId,
         });
-        props.getTodos()
-        setTodoTitle("")
-        setTodoDesc("")
+        msgCtx.setShowMessage(true);
+        msgCtx.setMessage("A todo has been added !");
+        msgCtx.setMessageState("success");
+        props.getTodos();
+        setTodoTitle("");
+        setTodoDesc("");
       } else {
         console.log("enter something dummy");
       }

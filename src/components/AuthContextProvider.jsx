@@ -7,7 +7,6 @@ import { auth } from "../firebase-config";
 const AuthContextProvider = (props) => {
   const [userStatus, setUserStatus] = useState(false);
   const [userId, setUserId] = useState("")
-  const navigate = useNavigate();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -22,7 +21,7 @@ const AuthContextProvider = (props) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ userStatus, setUserStatus, userId, setUserId }}>
+    <AuthContext.Provider value={{ userStatus, setUserStatus, userId, setUserId}}>
       {props.children}
     </AuthContext.Provider>
   );

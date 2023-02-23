@@ -18,17 +18,23 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link as RouterLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 import { auth, googleAuthProvider } from "../../firebase-config";
 import AuthContext from "../../auth-context";
+import MessageContext from "../../message-context";
 
 const LoginForm = () => {
   const utilityCtx = useContext(UtilityContext);
-  const [wrongPass, setWrongPass] = useState(false)
-  const [userNotFound, setUserNotFound] = useState(false)
-  const authCtx = useContext(AuthContext)
+  const msgCtx = useContext(MessageContext);
+  const [wrongPass, setWrongPass] = useState(false);
+  const [userNotFound, setUserNotFound] = useState(false);
+  const authCtx = useContext(AuthContext);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const formSchema = yup.object().shape({
     email: yup.string().email().required("Please enter your email"),
@@ -46,21 +52,24 @@ const LoginForm = () => {
   const onLogin = async (data) => {
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      if(auth?.currentUser){
-        authCtx.setUserStatus(true)
-        authCtx.setUserId(auth.currentUser.uid)
+      if (auth?.currentUser) {
+        authCtx.setUserStatus(true);
+        authCtx.setUserId(auth.currentUser.uid);
+        msgCtx.setShowMessage(true);
+        msgCtx.setMessage("You've successfully logged in !");
+        msgCtx.setMessageState("success");
       }
-      navigate("/home");
+      // navigate("/home");
     } catch (err) {
       const errorCode = err.code;
       if (errorCode === "auth/wrong-password") {
         console.log("wrong password");
-        setWrongPass(true)
-      } else if(errorCode === "auth/user-not-found") {
+        setWrongPass(true);
+      } else if (errorCode === "auth/user-not-found") {
         console.log("user does not exist");
-        setUserNotFound(true)
-      }else {
-        console.log(err)
+        setUserNotFound(true);
+      } else {
+        console.log(err);
       }
     }
   };
@@ -68,8 +77,11 @@ const LoginForm = () => {
   const onLogInWithGoogle = async () => {
     try {
       await signInWithPopup(auth, googleAuthProvider);
-      authCtx.setUserStatus(true)
-      authCtx.setUserId(auth.currentUser.uid)
+      authCtx.setUserStatus(true);
+      authCtx.setUserId(auth.currentUser.uid);
+      msgCtx.setShowMessage(true);
+      msgCtx.setMessage("You've successfully logged in !");
+      msgCtx.setMessageState("success");
     } catch (err) {
       console.log(err);
     }
@@ -89,7 +101,9 @@ const LoginForm = () => {
               type="email"
               {...register("email")}
             />
-            <FormErrorMessage>{errors.email?.message || (userNotFound && "User does not exist")}</FormErrorMessage>
+            <FormErrorMessage>
+              {errors.email?.message || (userNotFound && "User does not exist")}
+            </FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={errors.password || wrongPass}>
             <Input
@@ -100,7 +114,8 @@ const LoginForm = () => {
             />
             <FormErrorMessage>
               {errors.password?.message.charAt(0).toUpperCase() +
-                errors.password?.message.slice(1) || (wrongPass && "Bad email or password")}
+                errors.password?.message.slice(1) ||
+                (wrongPass && "Bad email or password")}
             </FormErrorMessage>
           </FormControl>
           <Button

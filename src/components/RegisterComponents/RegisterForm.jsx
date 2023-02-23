@@ -21,9 +21,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Link as RouterLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../auth-context";
+import MessageContext from "../../message-context";
 
 const RegisterForm = () => {
   const utilityCtx = useContext(UtilityContext);
+  const msgCtx = useContext(MessageContext);
   const [userExists, setUserExists] = useState(false)
   const authCtx = useContext(AuthContext)
 
@@ -52,7 +54,9 @@ const RegisterForm = () => {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
       authCtx.setUserStatus(true)
       authCtx.setUserId(auth.currentUser.uid)
-      navigate("/home");
+      msgCtx.setShowMessage(true)
+      msgCtx.setMessage("You've successfully logged in !")
+      msgCtx.setMessageState("success")
     } catch (err) {
       const errorCode = err.code;
       if (errorCode === "auth/email-already-in-use") {
@@ -70,6 +74,9 @@ const RegisterForm = () => {
       await signInWithPopup(auth, googleAuthProvider);
       authCtx.setUserStatus(true)
       authCtx.setUserId(auth.currentUser.uid)
+      msgCtx.setShowMessage(true)
+      msgCtx.setMessage("You've successfully logged in !")
+      msgCtx.setMessageState("success")
     } catch (err) {
       console.log(err);
     }

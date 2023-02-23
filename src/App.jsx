@@ -7,10 +7,12 @@ import NotFound from "./pages/NotFound";
 import AuthContextProvider from "./components/AuthContextProvider";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import ProtectedRoutesForAuth from "./components/ProtectedRoutesForAuth";
+import MessageContextProvider from "./components/MessageContextProvider";
 
 const App = () => {
   return (
     <AuthContextProvider>
+      <MessageContextProvider>
       <Routes>
         <Route element={<ProtectedRoutesForAuth />}>
           <Route path="/" element={<Login />} />
@@ -21,6 +23,7 @@ const App = () => {
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </MessageContextProvider>
     </AuthContextProvider>
   );
 };

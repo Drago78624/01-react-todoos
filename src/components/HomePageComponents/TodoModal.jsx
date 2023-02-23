@@ -18,10 +18,12 @@ import UtilityContext from "../../utility-context";
 import { EditIcon } from "@chakra-ui/icons";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase-config";
+import MessageContext from "../../message-context";
 
 const TodoModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const utilityCtx = useContext(UtilityContext);
+  const msgCtx = useContext(MessageContext);
   const [newTodoTitle, setNewTodoTitle] = useState(props.todoTitle)
   const [newTodoDesc, setNewTodoDesc] = useState(props.todoDesc)
 
@@ -31,6 +33,9 @@ const TodoModal = (props) => {
         todo_title: newTodoTitle,
         todo_description: newTodoDesc
     });
+    msgCtx.setShowMessage(true);
+    msgCtx.setMessage("Todo has been updated !");
+    msgCtx.setMessageState("success");
     onClose()
     props.getTodos();
   };
