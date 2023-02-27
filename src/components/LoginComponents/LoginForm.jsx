@@ -11,7 +11,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { FaGooglePlusG, FaFacebookSquare } from "react-icons/fa";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import UtilityContext from "../../utility-context";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -19,20 +19,20 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Link as RouterLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import {
-  onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
 import { auth, googleAuthProvider } from "../../firebase-config";
 import AuthContext from "../../auth-context";
 import MessageContext from "../../message-context";
+import initializeUserData from "../../initializeUserData";
 
 const LoginForm = () => {
   const utilityCtx = useContext(UtilityContext);
   const msgCtx = useContext(MessageContext);
+  const authCtx = useContext(AuthContext);
   const [wrongPass, setWrongPass] = useState(false);
   const [userNotFound, setUserNotFound] = useState(false);
-  const authCtx = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -52,14 +52,7 @@ const LoginForm = () => {
   const onLogin = async (data) => {
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      if (auth?.currentUser) {
-        authCtx.setUserStatus(true);
-        authCtx.setUserId(auth.currentUser.uid);
-        msgCtx.setShowMessage(true);
-        msgCtx.setMessage("You've successfully logged in !");
-        msgCtx.setMessageState("success");
-      }
-      // navigate("/home");
+      initializeUserData(auth, authCtx, msgCtx)
     } catch (err) {
       const errorCode = err.code;
       if (errorCode === "auth/wrong-password") {
@@ -77,11 +70,7 @@ const LoginForm = () => {
   const onLogInWithGoogle = async () => {
     try {
       await signInWithPopup(auth, googleAuthProvider);
-      authCtx.setUserStatus(true);
-      authCtx.setUserId(auth.currentUser.uid);
-      msgCtx.setShowMessage(true);
-      msgCtx.setMessage("You've successfully logged in !");
-      msgCtx.setMessageState("success");
+      initializeUserData(auth, authCtx, msgCtx)
     } catch (err) {
       console.log(err);
     }

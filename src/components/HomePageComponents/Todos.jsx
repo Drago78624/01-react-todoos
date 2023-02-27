@@ -9,7 +9,6 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { auth, db } from "../../firebase-config";
 import AuthContext from "../../auth-context";
 import Form from "./Form";
 import UtilityContext from "../../utility-context";

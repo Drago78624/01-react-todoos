@@ -1,7 +1,7 @@
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { DeleteIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, HStack, Text } from "@chakra-ui/react";
 import React, { useContext } from "react";
-import  ReactDOM  from "react-dom";
+// import  ReactDOM  from "react-dom";
 import UtilityContext from "../../utility-context";
 import TodoModal from "./TodoModal";
 

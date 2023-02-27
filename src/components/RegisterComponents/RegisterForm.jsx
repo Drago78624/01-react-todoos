@@ -13,24 +13,27 @@ import {
 import { FaGooglePlusG, FaFacebookSquare } from "react-icons/fa";
 import React, { useContext, useState } from "react";
 import UtilityContext from "../../utility-context";
-import { auth, facebookAuthProvider, googleAuthProvider } from "../../firebase-config";
+import {
+  auth,
+  facebookAuthProvider,
+  googleAuthProvider,
+} from "../../firebase-config";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link as RouterLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import AuthContext from "../../auth-context";
 import MessageContext from "../../message-context";
+import initializeUserData from "../../initializeUserData";
 
 const RegisterForm = () => {
   const utilityCtx = useContext(UtilityContext);
+  const authCtx = useContext(AuthContext);
   const msgCtx = useContext(MessageContext);
-  const [userExists, setUserExists] = useState(false)
-  const authCtx = useContext(AuthContext)
+  const [userExists, setUserExists] = useState(false);
 
-  const navigate = useNavigate();
-
+  // YUP SCHEMA FOR FORM VALIDATION
   const formSchema = yup.object().shape({
     email: yup.string().email().required("Please enter your email"),
     password: yup.string().min(8).required(),
@@ -48,41 +51,35 @@ const RegisterForm = () => {
     resolver: yupResolver(formSchema),
   });
 
+  // SIGN UP LOGIC WITH EMAIL AND PASSWORD
   const onSignUp = async (data) => {
     console.log(data);
     try {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
-      authCtx.setUserStatus(true)
-      authCtx.setUserId(auth.currentUser.uid)
-      msgCtx.setShowMessage(true)
-      msgCtx.setMessage("You've successfully logged in !")
-      msgCtx.setMessageState("success")
+      initializeUserData(auth, authCtx, msgCtx);
     } catch (err) {
       const errorCode = err.code;
       if (errorCode === "auth/email-already-in-use") {
         console.log("User already exists with this email");
         // Show custom error message here
-        setUserExists(true)
+        setUserExists(true);
       } else {
         console.log(err);
       }
     }
   };
 
+  // SIGN UP LOGIC FOR GOOGLE
   const onSignUpWithGoogle = async () => {
     try {
       await signInWithPopup(auth, googleAuthProvider);
-      authCtx.setUserStatus(true)
-      authCtx.setUserId(auth.currentUser.uid)
-      msgCtx.setShowMessage(true)
-      msgCtx.setMessage("You've successfully logged in !")
-      msgCtx.setMessageState("success")
+      initializeUserData(auth, authCtx, msgCtx);
     } catch (err) {
       console.log(err);
     }
   };
 
-  const onSignUpWithFacebook= async () => {
+  const onSignUpWithFacebook = async () => {
     try {
       await signInWithPopup(auth, facebookAuthProvider);
     } catch (err) {
@@ -104,7 +101,9 @@ const RegisterForm = () => {
               type="email"
               {...register("email")}
             />
-            <FormErrorMessage>{errors.email?.message || (userExists && "User already exists")}</FormErrorMessage>
+            <FormErrorMessage>
+              {errors.email?.message || (userExists && "User already exists")}
+            </FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={errors.password}>
             <Input

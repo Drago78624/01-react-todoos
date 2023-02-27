@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   FormControl,
-  FormHelperText,
   FormLabel,
   Heading,
   Input,
