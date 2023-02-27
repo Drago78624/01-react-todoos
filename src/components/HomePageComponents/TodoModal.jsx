@@ -79,7 +79,7 @@ const TodoModal = (props) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={() => onUpdateTodo(props.todoId)} colorScheme="blue" mr={3}>
+            <Button colorScheme={utilityCtx.colorScheme} onClick={() => onUpdateTodo(props.todoId)} mr={3}>
               Save
             </Button>
             <Button onClick={onClose}>Cancel</Button>
