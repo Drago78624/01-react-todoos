@@ -1,7 +1,7 @@
 import React from "react"
 
 const UtilityContext = React.createContext({
-    colorScheme: "purple",
+    colorScheme: "teal",
     maxWidth: "992px"
 })
 
