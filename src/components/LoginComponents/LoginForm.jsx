@@ -76,7 +76,7 @@ const LoginForm = () => {
   return (
     <Box textAlign="center" minW={{ base: "300px", sm: "400px" }}>
       <Heading mb={8} size="lg">
-        Sign in Fawad
+        Sign in
       </Heading>
       <form onSubmit={handleSubmit(onLogin)}>
         <VStack spacing={5}>
