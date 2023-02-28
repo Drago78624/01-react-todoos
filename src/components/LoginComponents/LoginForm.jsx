@@ -18,10 +18,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link as RouterLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-} from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleAuthProvider } from "../../firebase-config";
 import AuthContext from "../../auth-context";
 import MessageContext from "../../message-context";
@@ -52,7 +49,7 @@ const LoginForm = () => {
   const onLogin = async (data) => {
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      initializeUserData(auth, authCtx, msgCtx)
+      initializeUserData(auth, authCtx, msgCtx);
     } catch (err) {
       const errorCode = err.code;
       if (errorCode === "auth/wrong-password") {
@@ -70,7 +67,7 @@ const LoginForm = () => {
   const onLogInWithGoogle = async () => {
     try {
       await signInWithPopup(auth, googleAuthProvider);
-      initializeUserData(auth, authCtx, msgCtx)
+      initializeUserData(auth, authCtx, msgCtx);
     } catch (err) {
       console.log(err);
     }
@@ -79,7 +76,7 @@ const LoginForm = () => {
   return (
     <Box textAlign="center" minW={{ base: "300px", sm: "400px" }}>
       <Heading mb={8} size="lg">
-        Sign in
+        Sign in Fawad
       </Heading>
       <form onSubmit={handleSubmit(onLogin)}>
         <VStack spacing={5}>
