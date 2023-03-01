@@ -37,6 +37,7 @@ const TodoModal = (props) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(formSchema),
@@ -49,16 +50,23 @@ const TodoModal = (props) => {
   const onUpdateTodo = async (data) => {
     const todoId = props.todoId;
     const todoDoc = doc(db, "todos", todoId);
-    await updateDoc(todoDoc, {
-      todo_title: data.title,
-      todo_description: data.details,
-    });
-    msgCtx.setShowMessage(true);
-    msgCtx.setMessage("Todo has been updated !");
-    msgCtx.setMessageState("success");
-    onClose();
-    props.getTodos();
+    if(data.title !== props.todoTitle || data.details !== props.todoDesc){
+      await updateDoc(todoDoc, {
+        todo_title: data.title,
+        todo_description: data.details,
+      });
+      msgCtx.setShowMessage(true);
+      msgCtx.setMessage("Todo has been updated !");
+      msgCtx.setMessageState("success");
+      onClose();
+      props.getTodos();
+    }
   };
+
+  const handleClose = () => {
+    reset()
+    onClose()
+  }
 
   const initialRef = useRef(null);
   const finalRef = useRef(null);
@@ -76,7 +84,7 @@ const TodoModal = (props) => {
         initialFocusRef={initialRef}
         finalFocusRef={finalRef}
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleClose}
       >
         <ModalOverlay />
         <ModalContent>
@@ -91,13 +99,19 @@ const TodoModal = (props) => {
                   placeholder="title..."
                   {...register("title")}
                 />
-                <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+                <FormErrorMessage>
+                  {errors.title?.message.charAt(0).toUpperCase() +
+                    errors.title?.message.slice(1)}
+                </FormErrorMessage>
               </FormControl>
 
               <FormControl mt={4} isInvalid={errors.details}>
                 <FormLabel>Details</FormLabel>
                 <Textarea placeholder="details..." {...register("details")} />
-                <FormErrorMessage>{errors.details?.message}</FormErrorMessage>
+                <FormErrorMessage>
+                  {errors.details?.message.charAt(0).toUpperCase() +
+                    errors.details?.message.slice(1)}
+                </FormErrorMessage>
               </FormControl>
             </ModalBody>
 
@@ -105,7 +119,7 @@ const TodoModal = (props) => {
               <Button type="submit" colorScheme={utilityCtx.colorScheme} mr={3}>
                 Save
               </Button>
-              <Button onClick={onClose}>Cancel</Button>
+              <Button onClick={handleClose}>Cancel</Button>
             </ModalFooter>
           </form>
         </ModalContent>

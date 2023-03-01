@@ -67,7 +67,8 @@ const Form = (props) => {
             type="text"
             {...register("title")}
           />
-          <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+          <FormErrorMessage>{errors.title?.message.charAt(0).toUpperCase() +
+                errors.title?.message.slice(1)}</FormErrorMessage>
         </FormControl>
         <FormControl marginTop={4} isInvalid={errors.details}>
           <FormLabel>Details</FormLabel>
@@ -75,7 +76,8 @@ const Form = (props) => {
             placeholder="e.g Buy tomatoes, onions, potatoes and soap"
             {...register("details")}
           />
-          <FormErrorMessage>{errors.details?.message}</FormErrorMessage>
+          <FormErrorMessage>{errors.details?.message.charAt(0).toUpperCase() +
+                errors.details?.message.slice(1)}</FormErrorMessage>
         </FormControl>
         <Button type="submit" colorScheme={props.colorScheme} mt={4}>
           Add
