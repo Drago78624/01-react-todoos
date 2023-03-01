@@ -6,7 +6,9 @@ import {
   FormLabel,
   Heading,
   Input,
+  Text,
   Textarea,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -16,6 +18,7 @@ import React, { useContext } from "react";
 import AuthContext from "../../auth-context";
 import { db } from "../../firebase-config";
 import MessageContext from "../../message-context";
+import {MdLibraryAdd} from "react-icons/md"
 
 const Form = (props) => {
   const authCtx = useContext(AuthContext);
@@ -58,7 +61,7 @@ const Form = (props) => {
 
   return (
     <Box my={8}>
-      <Heading size="lg">Add Todo</Heading>
+      <Heading size="lg" textAlign="center" >Add Todo</Heading>
       <form onSubmit={handleSubmit(onAddTodo)}>
         <FormControl marginTop={4} isInvalid={errors.title}>
           <FormLabel>Title</FormLabel>
@@ -80,7 +83,8 @@ const Form = (props) => {
                 errors.details?.message.slice(1)}</FormErrorMessage>
         </FormControl>
         <Button type="submit" colorScheme={props.colorScheme} mt={4}>
-          Add
+          <Text mr={2}>Add</Text>
+          <MdLibraryAdd />
         </Button>
       </form>
     </Box>

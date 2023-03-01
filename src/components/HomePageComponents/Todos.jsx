@@ -1,4 +1,4 @@
-import { Box, Heading, VStack } from "@chakra-ui/react";
+import { Box, Heading, useColorModeValue, VStack } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 import Todo from "./Todo";
 import {
@@ -67,12 +67,12 @@ const Todos = () => {
     <>
       <Box>
         <Form getTodos={getTodos} colorScheme={utilityCtx.colorScheme} />
-        <Heading size="lg">Your Todos</Heading>
+        {todos.length > 0 && <Heading size="lg" textAlign="center">Your Todos</Heading>}
         <VStack mt={4}>
           {todos.length > 0 ? (
             displayTodos
           ) : (
-            <Heading size="lg">No Todos Found</Heading>
+            <Heading size="lg" mt={5}>"No Todos Found !"</Heading>
           )}
         </VStack>
       </Box>
