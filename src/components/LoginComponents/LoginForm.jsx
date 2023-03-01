@@ -17,7 +17,6 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link as RouterLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleAuthProvider } from "../../firebase-config";
 import AuthContext from "../../auth-context";
@@ -30,8 +29,6 @@ const LoginForm = () => {
   const authCtx = useContext(AuthContext);
   const [wrongPass, setWrongPass] = useState(false);
   const [userNotFound, setUserNotFound] = useState(false);
-
-  const navigate = useNavigate();
 
   const formSchema = yup.object().shape({
     email: yup.string().email().required("Please enter your email"),

@@ -13,30 +13,50 @@ import {
   FormLabel,
   Input,
   Textarea,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import UtilityContext from "../../utility-context";
 import { EditIcon } from "@chakra-ui/icons";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase-config";
 import MessageContext from "../../message-context";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const TodoModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const utilityCtx = useContext(UtilityContext);
   const msgCtx = useContext(MessageContext);
-  const [newTodoTitle, setNewTodoTitle] = useState(props.todoTitle)
-  const [newTodoDesc, setNewTodoDesc] = useState(props.todoDesc)
 
-  const onUpdateTodo = async (id) => {
-    const todoDoc = doc(db, "todos", id);
+  const formSchema = yup.object().shape({
+    title: yup.string().min(4).required("Please enter todo title"),
+    details: yup.string().min(8).required("Please enter todo details"),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(formSchema),
+    defaultValues: {
+      title: props.todoTitle,
+      details: props.todoDesc,
+    },
+  });
+
+  const onUpdateTodo = async (data) => {
+    const todoId = props.todoId;
+    const todoDoc = doc(db, "todos", todoId);
     await updateDoc(todoDoc, {
-        todo_title: newTodoTitle,
-        todo_description: newTodoDesc
+      todo_title: data.title,
+      todo_description: data.details,
     });
     msgCtx.setShowMessage(true);
     msgCtx.setMessage("Todo has been updated !");
     msgCtx.setMessageState("success");
-    onClose()
+    onClose();
     props.getTodos();
   };
 
@@ -62,28 +82,32 @@ const TodoModal = (props) => {
         <ModalContent>
           <ModalHeader>Update you todo</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel>Title</FormLabel>
-              <Input
-                value={newTodoTitle} onChange={e => setNewTodoTitle(e.target.value)}
-                ref={initialRef}
-                placeholder="First name"
-              />
-            </FormControl>
+          <form onSubmit={handleSubmit(onUpdateTodo)}>
+            <ModalBody pb={6}>
+              <FormControl isInvalid={errors.title}>
+                <FormLabel>Title</FormLabel>
+                <Input
+                  ref={initialRef}
+                  placeholder="title..."
+                  {...register("title")}
+                />
+                <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+              </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>Details</FormLabel>
-              <Textarea value={newTodoDesc} onChange={e => setNewTodoDesc(e.target.value)} />
-            </FormControl>
-          </ModalBody>
+              <FormControl mt={4} isInvalid={errors.details}>
+                <FormLabel>Details</FormLabel>
+                <Textarea placeholder="details..." {...register("details")} />
+                <FormErrorMessage>{errors.details?.message}</FormErrorMessage>
+              </FormControl>
+            </ModalBody>
 
-          <ModalFooter>
-            <Button colorScheme={utilityCtx.colorScheme} onClick={() => onUpdateTodo(props.todoId)} mr={3}>
-              Save
-            </Button>
-            <Button onClick={onClose}>Cancel</Button>
-          </ModalFooter>
+            <ModalFooter>
+              <Button type="submit" colorScheme={utilityCtx.colorScheme} mr={3}>
+                Save
+              </Button>
+              <Button onClick={onClose}>Cancel</Button>
+            </ModalFooter>
+          </form>
         </ModalContent>
       </Modal>
     </>
